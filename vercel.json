@@ -1,0 +1,25 @@
+{
+	"version": 2,
+	"builds": [
+		{
+			"src": "index.js",
+			"use": "@vercel/node"
+		}
+	],
+	"routes": [
+		{
+			"src": "/(.*)",
+			"dest": "/index.js"
+		}
+	],
+	"env": {
+		"MONGODB_URI": "mongodb+srv://ctasbihas:VhwFrw1ydmfWIobo@projects.yc3yzra.mongodb.net/bistroBuzz",
+		"STRIPE_SECRET_KEY": "sk_test_51NERDMA59ZeC6EHZ1N3HLe66rcoN4jy3v8Ojgac1HFy7WoVkWOC3WZlVLJUX0yCZpdPFg0NTWZ6MMNX6XYKniTBU004PeEJAQC",
+		"JWT_SECRET": "634a7cfea67ea572a93538bc0c31df0c637d75b48502f2ffc54d2febe4994d1e810f5f863a3b8668d471fcb99add4d86fe6ad3439f61c4e619f195132774acd3"
+	},
+	"functions": {
+		"api/*": {
+			"runtime": "@vercel/node"
+		}
+	}
+}
