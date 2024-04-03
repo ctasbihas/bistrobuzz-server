@@ -4,6 +4,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const nodemailer = require("nodemailer");
 const app = express();
 const port = process.env.PORT || 5000;
 
@@ -71,6 +72,15 @@ async function run() {
         // Menus collection
         app.get("/menu", async (req, res) => {
             const result = await menuCollection.find().toArray();
+            res.send(result);
+        });
+        app.get("/menu/:category", async (req, res) => {
+            const category = req.params.category;
+            const result = await menuCollection
+                .find({
+                    category: category,
+                })
+                .toArray();
             res.send(result);
         });
         app.post("/menu", VerifyJWT, verifyAdmin, async (req, res) => {
@@ -228,6 +238,36 @@ async function run() {
                 .aggregate(pipeline)
                 .toArray();
             res.send(result);
+        });
+
+        // Send Mail
+        app.post("/contact", async (req, res) => {
+            const { name, email, subject, message } = req.body;
+
+            /* */ let transporter = nodemailer.createTransport({
+                host: "smtp.gmail.com",
+                port: 587,
+                secure: true,
+                service: "gmail",
+                auth: {
+                    user: process.env.EMAIL_USERNAME,
+                    pass: process.env.EMAIL_PASSWORD,
+                },
+            });
+
+            let info = await transporter.sendMail({
+                from: `"From ${email}"`,
+                to: "tasbihhmd+portfolio@gmail.com",
+                sender: email,
+                subject: subject + " - " + name + " - " + email,
+                text: message,
+                html: `<div>${message}</div>`,
+            });
+
+            res.json({
+                message: "Email sent",
+                messageId: info.messageId,
+            });
         });
 
         // Send a ping to confirm a successful connection
