@@ -176,6 +176,19 @@ async function run() {
 
             res.send({ insertResult, deleteResult });
         });
+        app.get("/payments", VerifyJWT, async (req, res) => {
+            const email = req.query.email;
+            if (!email) {
+                res.send("Email is required");
+            }
+            const decodedEmail = req.decoded.email;
+            if (email !== decodedEmail) {
+                return res.status(403).send({ message: "Forbidden access" });
+            }
+            const query = { email: email };
+            const result = await paymentCollection.find(query).toArray();
+            res.send(result);
+        });
 
         // Payment Intent
         app.post("/create-payment-intent", VerifyJWT, async (req, res) => {
